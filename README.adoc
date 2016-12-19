@@ -1,1 +1,9 @@
-# aws-s3
+# AWS S3 Source and Sink
+
+To learn more about this application and the supported properties, please review the following link.
+
+## AWS Source
+include::spring-cloud-starter-stream-source-s3/README.adoc[]
+
+## AWS Sink
+include::spring-cloud-starter-stream-sink-s3/README.adoc[]
