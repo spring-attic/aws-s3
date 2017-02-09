@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,8 +44,7 @@ import org.mockito.stubbing.Answer;
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
@@ -55,7 +54,7 @@ import org.springframework.integration.test.util.TestUtils;
 import org.springframework.messaging.Message;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import com.amazonaws.event.ProgressEvent;
 import com.amazonaws.event.ProgressEventType;
@@ -76,15 +75,15 @@ import com.amazonaws.util.StringInputStream;
 /**
  * @author Artem Bilan
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration
+@RunWith(SpringRunner.class)
 @DirtiesContext
-@TestPropertySource(properties = {
-		"cloud.aws.stack.auto=false",
-		"cloud.aws.credentials.accessKey=" + AmazonS3SinkMockTests.AWS_ACCESS_KEY,
-		"cloud.aws.credentials.secretKey=" + AmazonS3SinkMockTests.AWS_SECRET_KEY,
-		"cloud.aws.region.static=" + AmazonS3SinkMockTests.AWS_REGION,
-		"s3.bucket=" + AmazonS3SinkMockTests.S3_BUCKET })
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE,
+		properties = {
+				"cloud.aws.stack.auto=false",
+				"cloud.aws.credentials.accessKey=" + AmazonS3SinkMockTests.AWS_ACCESS_KEY,
+				"cloud.aws.credentials.secretKey=" + AmazonS3SinkMockTests.AWS_SECRET_KEY,
+				"cloud.aws.region.static=" + AmazonS3SinkMockTests.AWS_REGION,
+				"s3.bucket=" + AmazonS3SinkMockTests.S3_BUCKET })
 public abstract class AmazonS3SinkMockTests {
 
 	protected static final String AWS_ACCESS_KEY = "test.accessKey";
@@ -145,7 +144,7 @@ public abstract class AmazonS3SinkMockTests {
 
 	public abstract void test() throws Exception;
 
-	@IntegrationTest({ "s3.acl=PublicReadWrite" })
+	@TestPropertySource(properties = "s3.acl=PublicReadWrite")
 	public static class AmazonS3UploadFileTests extends AmazonS3SinkMockTests {
 
 		@Test
@@ -195,7 +194,7 @@ public abstract class AmazonS3SinkMockTests {
 
 	}
 
-	@IntegrationTest({ "s3.key-expression=headers.key" })
+	@TestPropertySource(properties = "s3.key-expression=headers.key")
 	public static class AmazonS3UploadInputStreamTests extends AmazonS3SinkMockTests {
 
 

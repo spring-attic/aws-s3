@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,8 +49,7 @@ import org.mockito.stubbing.Answer;
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.stream.messaging.Source;
 import org.springframework.cloud.stream.test.binder.MessageCollector;
 import org.springframework.integration.aws.support.S3Session;
@@ -60,7 +59,7 @@ import org.springframework.integration.test.util.TestUtils;
 import org.springframework.messaging.Message;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.FileCopyUtils;
 
 import com.amazonaws.auth.AWSCredentials;
@@ -76,16 +75,16 @@ import com.amazonaws.services.s3.model.S3ObjectSummary;
 /**
  * @author Artem Bilan
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE,
+		properties = {
+				"cloud.aws.stack.auto=false",
+				"cloud.aws.credentials.accessKey=" + AmazonS3SourceMockTests.AWS_ACCESS_KEY,
+				"cloud.aws.credentials.secretKey=" + AmazonS3SourceMockTests.AWS_SECRET_KEY,
+				"cloud.aws.region.static=" + AmazonS3SourceMockTests.AWS_REGION,
+				"trigger.initialDelay=1",
+				"s3.remoteDir=" + AmazonS3SourceMockTests.S3_BUCKET })
 @DirtiesContext
-@TestPropertySource(properties = {
-		"cloud.aws.stack.auto=false",
-		"cloud.aws.credentials.accessKey=" + AmazonS3SourceMockTests.AWS_ACCESS_KEY,
-		"cloud.aws.credentials.secretKey=" + AmazonS3SourceMockTests.AWS_SECRET_KEY,
-		"cloud.aws.region.static=" + AmazonS3SourceMockTests.AWS_REGION,
-		"trigger.initialDelay=1",
-		"s3.remoteDir=" + AmazonS3SourceMockTests.S3_BUCKET })
 public abstract class AmazonS3SourceMockTests {
 
 	@ClassRule
@@ -193,7 +192,9 @@ public abstract class AmazonS3SourceMockTests {
 
 	public abstract void test() throws Exception;
 
-	@IntegrationTest({ "file.consumer.mode=ref", "s3.filenameRegex=.*\\\\.test$" })
+	@TestPropertySource(properties = {
+			"file.consumer.mode=ref",
+			"s3.filenameRegex=.*\\\\.test$" })
 	public static class AmazonS3FilesTransferredTests extends AmazonS3SourceMockTests {
 
 
@@ -223,7 +224,10 @@ public abstract class AmazonS3SourceMockTests {
 
 	}
 
-	@IntegrationTest({ "file.consumer.mode=lines", "s3.filenamePattern=otherFile", "file.consumer.with-markers=false" })
+	@TestPropertySource(properties = {
+			"file.consumer.mode=lines",
+			"s3.filenamePattern=otherFile",
+			"file.consumer.with-markers=false" })
 	public static class AmazonS3LinesTransferredTests extends AmazonS3SourceMockTests {
 
 
