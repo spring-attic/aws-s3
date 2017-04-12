@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,27 +17,121 @@
 package org.springframework.cloud.stream.app.s3.source;
 
 import java.io.File;
+import java.util.regex.Pattern;
+
+import javax.validation.constraints.AssertTrue;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.cloud.stream.app.file.remote.AbstractRemoteFileSourceProperties;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * @author Artem Bilan
  */
 @ConfigurationProperties("s3")
-public class AmazonS3SourceProperties extends AbstractRemoteFileSourceProperties {
+@Validated
+public class AmazonS3SourceProperties {
 
-	public AmazonS3SourceProperties() {
-		setRemoteDir("bucket");
-		setLocalDir(new File(System.getProperty("java.io.tmpdir") + "/s3/source"));
-	}
+	private String remoteDir = "bucket";
 
-	@Override
+	private String tmpFileSuffix = ".tmp";
+
+	private String remoteFileSeparator = "/";
+
+	private boolean deleteRemoteFiles = false;
+
+	private File localDir = new File(System.getProperty("java.io.tmpdir") + "/s3/source");
+
+	private boolean autoCreateLocalDir = true;
+
+	private String filenamePattern;
+
+	private Pattern filenameRegex;
+
+	private boolean preserveTimestamp = true;
+
 	@Length(min = 3)
 	public String getRemoteDir() {
-		return super.getRemoteDir();
+		return this.remoteDir;
+	}
+
+	public final void setRemoteDir(String remoteDir) {
+		this.remoteDir = remoteDir;
+	}
+
+	@NotBlank
+	public String getTmpFileSuffix() {
+		return tmpFileSuffix;
+	}
+
+	public void setTmpFileSuffix(String tmpFileSuffix) {
+		this.tmpFileSuffix = tmpFileSuffix;
+	}
+
+	@NotBlank
+	public String getRemoteFileSeparator() {
+		return remoteFileSeparator;
+	}
+
+	public void setRemoteFileSeparator(String remoteFileSeparator) {
+		this.remoteFileSeparator = remoteFileSeparator;
+	}
+
+	public boolean isAutoCreateLocalDir() {
+		return autoCreateLocalDir;
+	}
+
+	public void setAutoCreateLocalDir(boolean autoCreateLocalDir) {
+		this.autoCreateLocalDir = autoCreateLocalDir;
+	}
+
+	public boolean isDeleteRemoteFiles() {
+		return deleteRemoteFiles;
+	}
+
+	public void setDeleteRemoteFiles(boolean deleteRemoteFiles) {
+		this.deleteRemoteFiles = deleteRemoteFiles;
+	}
+
+	@NotNull
+	public File getLocalDir() {
+		return localDir;
+	}
+
+	public final void setLocalDir(File localDir) {
+		this.localDir = localDir;
+	}
+
+	public String getFilenamePattern() {
+		return filenamePattern;
+	}
+
+	public void setFilenamePattern(String filenamePattern) {
+		this.filenamePattern = filenamePattern;
+	}
+
+	public Pattern getFilenameRegex() {
+		return filenameRegex;
+	}
+
+	public void setFilenameRegex(Pattern filenameRegex) {
+		this.filenameRegex = filenameRegex;
+	}
+
+	public boolean isPreserveTimestamp() {
+		return preserveTimestamp;
+	}
+
+	public void setPreserveTimestamp(boolean preserveTimestamp) {
+		this.preserveTimestamp = preserveTimestamp;
+	}
+
+	@AssertTrue(message = "filenamePattern and filenameRegex are mutually exclusive")
+	public boolean isExclusivePatterns() {
+		return !(this.filenamePattern != null && this.filenameRegex != null);
 	}
 
 }

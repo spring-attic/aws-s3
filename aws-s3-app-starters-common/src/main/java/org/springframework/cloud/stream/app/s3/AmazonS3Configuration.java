@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2017 the original author or authors.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,8 +22,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.regions.Region;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 
 /**
  * @author Artem Bilan
@@ -35,8 +36,10 @@ public class AmazonS3Configuration {
 	@Bean
 	@ConditionalOnMissingBean
 	public AmazonS3 amazonS3(AWSCredentialsProvider awsCredentialsProvider, RegionProvider regionProvider) {
-		return new AmazonS3Client(awsCredentialsProvider)
-				.withRegion(regionProvider.getRegion());
+		return AmazonS3ClientBuilder.standard()
+				.withCredentials(awsCredentialsProvider)
+				.withRegion(regionProvider.getRegion().getName())
+				.build();
 	}
 
 }

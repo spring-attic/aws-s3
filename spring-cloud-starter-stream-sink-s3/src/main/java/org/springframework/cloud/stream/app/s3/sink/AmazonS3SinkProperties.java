@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import org.hibernate.validator.constraints.Length;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.expression.Expression;
+import org.springframework.validation.annotation.Validated;
 
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 
@@ -29,6 +30,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
  * @author Artem Bilan
  */
 @ConfigurationProperties("s3")
+@Validated
 public class AmazonS3SinkProperties {
 
 	/**
