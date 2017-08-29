@@ -14,6 +14,23 @@ When using `--mode=lines`, you can also provide the additional option `--withMar
 If set to `true`, the underlying `FileSplitter` will emit additional _start-of-file_ and _end-of-file_ marker messages before and after the actual data.
 The payload of these 2 additional marker messages is of type `FileSplitter.FileMarker`. The option `withMarkers` defaults to `false` if not explicitly set.
 
+== Input
+
+=== Headers
+
+N/A
+
+=== Payload
+
+* `java.io.File`
+* `java.io.InputStream`
+* `byte[]`
+* `String`
+
+== Output
+
+N/A 
+
 == Options
 
 The **$$s3$$** $$sink$$ has the following options:
@@ -56,5 +73,16 @@ And for AWS `Stack`:
 == Build
 
 ```
-$> mvn package
+$ ./mvnw clean install -PgenerateApps
+$ cd apps
+```
+You can find the corresponding binder based projects here. You can then cd into one one of the folders and build it:
+```
+$ ./mvnw clean package
+```
+
+=== Examples
+
+```
+java -jar s3-sink.jar --s3.bucket=/tmp/bar
 ```
