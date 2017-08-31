@@ -68,8 +68,6 @@ And for AWS `Stack`:
 - cloud.aws.stack.auto
 - cloud.aws.stack.name
 
-//end::ref-doc[]
-
 == Build
 
 ```
@@ -86,3 +84,5 @@ $ ./mvnw clean package
 ```
 java -jar s3-sink.jar --s3.bucket=/tmp/bar
 ```
+
+//end::ref-doc[]
