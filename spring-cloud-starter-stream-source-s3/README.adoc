@@ -118,8 +118,6 @@ And for AWS `Stack`:
 - cloud.aws.stack.auto
 - cloud.aws.stack.name
 
-//end::ref-doc[]
-
 == Build
 
 ```
@@ -136,3 +134,4 @@ $ ./mvnw clean package
 ```
 java -jar s3-source.jar --s3.remoteDir=/tmp/foo --file.consumer.mode=lines --trigger.fixed-delay=60
 ```
+//end::ref-doc[]
