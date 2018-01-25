@@ -76,15 +76,15 @@ $$file.consumer.mode$$:: $$The FileReadingMode to use for file reading sources.
  'contents' - the contents as bytes.$$ *($$FileReadingMode$$, default: `$$<none>$$`, possible values: `ref`,`lines`,`contents`)*
 $$file.consumer.with-markers$$:: $$Set to true to emit start of file/end of file marker messages before/after the data.
  	Only valid with FileReadingMode 'lines'.$$ *($$Boolean$$, default: `$$<none>$$`)*
-$$s3.auto-create-local-dir$$:: $$<documentation missing>$$ *($$Boolean$$, default: `$$<none>$$`)*
-$$s3.delete-remote-files$$:: $$<documentation missing>$$ *($$Boolean$$, default: `$$<none>$$`)*
-$$s3.filename-pattern$$:: $$<documentation missing>$$ *($$String$$, default: `$$<none>$$`)*
-$$s3.filename-regex$$:: $$<documentation missing>$$ *($$Pattern$$, default: `$$<none>$$`)*
-$$s3.local-dir$$:: $$<documentation missing>$$ *($$File$$, default: `$$<none>$$`)*
-$$s3.preserve-timestamp$$:: $$<documentation missing>$$ *($$Boolean$$, default: `$$<none>$$`)*
-$$s3.remote-dir$$:: $$<documentation missing>$$ *($$String$$, default: `$$<none>$$`)*
-$$s3.remote-file-separator$$:: $$<documentation missing>$$ *($$String$$, default: `$$<none>$$`)*
-$$s3.tmp-file-suffix$$:: $$<documentation missing>$$ *($$String$$, default: `$$<none>$$`)*
+$$s3.auto-create-local-dir$$:: $$Create or not the local directory.$$ *($$Boolean$$, default: `$$true$$`)*
+$$s3.delete-remote-files$$:: $$Delete or not remote files after processing.$$ *($$Boolean$$, default: `$$false$$`)*
+$$s3.filename-pattern$$:: $$The pattern to filter remote files.$$ *($$String$$, default: `$$<none>$$`)*
+$$s3.filename-regex$$:: $$The regexp to filter remote files.$$ *($$Pattern$$, default: `$$<none>$$`)*
+$$s3.local-dir$$:: $$The local directory to store files.$$ *($$File$$, default: `$$<none>$$`)*
+$$s3.preserve-timestamp$$:: $$To transfer or not the timestamp of the remote file to the local one.$$ *($$Boolean$$, default: `$$true$$`)*
+$$s3.remote-dir$$:: $$AWS S3 bucket resource.$$ *($$String$$, default: `$$bucket$$`)*
+$$s3.remote-file-separator$$:: $$Remote File separator.$$ *($$String$$, default: `$$/$$`)*
+$$s3.tmp-file-suffix$$:: $$Temporary file suffix.$$ *($$String$$, default: `$$.tmp$$`)*
 $$trigger.cron$$:: $$Cron expression value for the Cron Trigger.$$ *($$String$$, default: `$$<none>$$`)*
 $$trigger.date-format$$:: $$Format for the date value.$$ *($$String$$, default: `$$<none>$$`)*
 $$trigger.fixed-delay$$:: $$Fixed delay for periodic triggers.$$ *($$Integer$$, default: `$$1$$`)*

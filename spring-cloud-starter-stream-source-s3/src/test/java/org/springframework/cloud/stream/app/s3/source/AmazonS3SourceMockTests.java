@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 the original author or authors.
+ * Copyright 2016-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,13 @@
 
 package org.springframework.cloud.stream.app.s3.source;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.willAnswer;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.spy;
 import static org.springframework.integration.test.matcher.HeaderMatcher.hasHeader;
 import static org.springframework.integration.test.matcher.PayloadMatcher.hasPayload;
@@ -43,8 +44,6 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -154,35 +153,23 @@ public abstract class AmazonS3SourceMockTests {
 
 		AmazonS3 amazonS3 = spy(this.amazonS3);
 
-		willAnswer(new Answer<ObjectListing>() {
-
-			@Override
-			public ObjectListing answer(InvocationOnMock invocation) throws Throwable {
-				ObjectListing objectListing = new ObjectListing();
-				List<S3ObjectSummary> objectSummaries = objectListing.getObjectSummaries();
-				for (S3Object s3Object : S3_OBJECTS) {
-					S3ObjectSummary s3ObjectSummary = new S3ObjectSummary();
-					s3ObjectSummary.setBucketName(S3_BUCKET);
-					s3ObjectSummary.setKey(s3Object.getKey());
-					Calendar calendar = Calendar.getInstance();
-					calendar.add(Calendar.DATE, 1);
-					s3ObjectSummary.setLastModified(calendar.getTime());
-					objectSummaries.add(s3ObjectSummary);
-				}
-				return objectListing;
+		willAnswer(invocation -> {
+			ObjectListing objectListing = new ObjectListing();
+			List<S3ObjectSummary> objectSummaries = objectListing.getObjectSummaries();
+			for (S3Object s3Object : S3_OBJECTS) {
+				S3ObjectSummary s3ObjectSummary = new S3ObjectSummary();
+				s3ObjectSummary.setBucketName(S3_BUCKET);
+				s3ObjectSummary.setKey(s3Object.getKey());
+				Calendar calendar = Calendar.getInstance();
+				calendar.add(Calendar.DATE, 1);
+				s3ObjectSummary.setLastModified(calendar.getTime());
+				objectSummaries.add(s3ObjectSummary);
 			}
-
+			return objectListing;
 		}).given(amazonS3).listObjects(any(ListObjectsRequest.class));
 
 		for (final S3Object s3Object : S3_OBJECTS) {
-			willAnswer(new Answer<S3Object>() {
-
-				@Override
-				public S3Object answer(InvocationOnMock invocation) throws Throwable {
-					return s3Object;
-				}
-
-			}).given(amazonS3).getObject(S3_BUCKET, s3Object.getKey());
+			willAnswer(invocation -> s3Object).given(amazonS3).getObject(S3_BUCKET, s3Object.getKey());
 		}
 
 
@@ -205,7 +192,9 @@ public abstract class AmazonS3SourceMockTests {
 				Message<?> received = this.messageCollector.forChannel(this.channels.output())
 						.poll(10, TimeUnit.SECONDS);
 				assertNotNull(received);
-				assertThat(received, hasPayload(new File(this.config.getLocalDir(), i + ".test")));
+
+				assertThat(new File(received.getPayload().toString().replaceAll("\"", "")),
+						equalTo(new File(this.config.getLocalDir() + File.separator + i + ".test")));
 			}
 
 			assertEquals(2, this.config.getLocalDir().list().length);
@@ -218,7 +207,7 @@ public abstract class AmazonS3SourceMockTests {
 			assertEquals(AWS_SECRET_KEY, credentials.getAWSSecretKey());
 
 			assertEquals(Region.US_GovCloud, this.amazonS3.getRegion());
-			assertEquals(new URI("https://s3-us-gov-west-1.amazonaws.com"),
+			assertEquals(new URI("https://s3.us-gov-west-1.amazonaws.com"),
 					TestUtils.getPropertyValue(this.amazonS3, "endpoint"));
 		}
 

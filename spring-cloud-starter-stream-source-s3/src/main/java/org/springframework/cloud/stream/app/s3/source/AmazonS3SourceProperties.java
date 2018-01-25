@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 the original author or authors.
+ * Copyright 2016-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,10 @@ import java.io.File;
 import java.util.regex.Pattern;
 
 import javax.validation.constraints.AssertTrue;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
@@ -35,22 +35,49 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public class AmazonS3SourceProperties {
 
+	/**
+	 * AWS S3 bucket resource.
+	 */
 	private String remoteDir = "bucket";
 
+	/**
+	 * Temporary file suffix.
+	 */
 	private String tmpFileSuffix = ".tmp";
 
+	/**
+	 * Remote File separator.
+	 */
 	private String remoteFileSeparator = "/";
 
+	/**
+	 * Delete or not remote files after processing.
+	 */
 	private boolean deleteRemoteFiles = false;
 
+	/**
+	 * The local directory to store files.
+	 */
 	private File localDir = new File(System.getProperty("java.io.tmpdir") + "/s3/source");
 
+	/**
+	 * Create or not the local directory.
+	 */
 	private boolean autoCreateLocalDir = true;
 
+	/**
+	 * The pattern to filter remote files.
+	 */
 	private String filenamePattern;
 
+	/**
+	 * The regexp to filter remote files.
+	 */
 	private Pattern filenameRegex;
 
+	/**
+	 * To transfer or not the timestamp of the remote file to the local one.
+	 */
 	private boolean preserveTimestamp = true;
 
 	@Length(min = 3)

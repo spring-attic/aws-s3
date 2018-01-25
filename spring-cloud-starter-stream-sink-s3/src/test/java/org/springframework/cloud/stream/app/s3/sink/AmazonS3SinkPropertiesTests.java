@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 the original author or authors.
+ * Copyright 2016-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package org.springframework.cloud.stream.app.s3.sink;
 
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
@@ -26,10 +25,11 @@ import org.junit.Test;
 
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.util.EnvironmentTestUtils;
+import org.springframework.boot.context.properties.bind.BindException;
+import org.springframework.boot.context.properties.bind.validation.BindValidationException;
+import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.cloud.stream.config.SpelExpressionConverterConfiguration;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 import com.amazonaws.services.s3.model.CannedAccessControlList;
@@ -42,7 +42,8 @@ public class AmazonS3SinkPropertiesTests {
 	@Test
 	public void s3BucketCanBeCustomized() {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-		EnvironmentTestUtils.addEnvironment(context, "s3.bucket:foo");
+		TestPropertyValues.of("s3.bucket:foo")
+				.applyTo(context);
 		context.register(Conf.class);
 		context.refresh();
 		AmazonS3SinkProperties properties = context.getBean(AmazonS3SinkProperties.class);
@@ -53,7 +54,8 @@ public class AmazonS3SinkPropertiesTests {
 	@Test
 	public void s3BucketExpressionCanBeCustomized() {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-		EnvironmentTestUtils.addEnvironment(context, "s3.bucket-expression:headers.bucket");
+		TestPropertyValues.of("s3.bucket-expression:headers.bucket")
+				.applyTo(context);
 		context.register(Conf.class);
 		context.refresh();
 		AmazonS3SinkProperties properties = context.getBean(AmazonS3SinkProperties.class);
@@ -64,7 +66,8 @@ public class AmazonS3SinkPropertiesTests {
 	@Test
 	public void s3BucketAndBucketExpressionAreMutuallyExclusive() {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-		EnvironmentTestUtils.addEnvironment(context, "s3.bucket:foo", "s3.bucketExpression:headers.bucket");
+		TestPropertyValues.of("s3.bucket:foo", "s3.bucketExpression:headers.bucket")
+				.applyTo(context);
 		context.register(Conf.class);
 		try {
 			context.refresh();
@@ -72,14 +75,17 @@ public class AmazonS3SinkPropertiesTests {
 		}
 		catch (Exception e) {
 			assertThat(e, instanceOf(BeanCreationException.class));
-			assertThat(e.getMessage(), containsString("Exactly one of 'bucket' or 'bucketExpression' must be set"));
+			assertThat(e.getCause(), instanceOf(BindException.class));
+			assertThat(e.getCause().getCause(), instanceOf(BindValidationException.class));
 		}
+		context.close();
 	}
 
 	@Test
 	public void s3KeyCanBeCustomized() {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-		EnvironmentTestUtils.addEnvironment(context, "s3.bucket:foo", "s3.keyExpression:'foo'");
+		TestPropertyValues.of("s3.bucket:foo", "s3.keyExpression:'foo'")
+				.applyTo(context);
 		context.register(Conf.class);
 		context.refresh();
 		AmazonS3SinkProperties properties = context.getBean(AmazonS3SinkProperties.class);
@@ -90,7 +96,8 @@ public class AmazonS3SinkPropertiesTests {
 	@Test
 	public void aclCanBeCustomized() {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-		EnvironmentTestUtils.addEnvironment(context, "s3.bucket:foo", "s3.acl:AuthenticatedRead");
+		TestPropertyValues.of("s3.bucket:foo", "s3.acl:AuthenticatedRead")
+				.applyTo(context);
 		context.register(Conf.class);
 		context.refresh();
 		AmazonS3SinkProperties properties = context.getBean(AmazonS3SinkProperties.class);
@@ -101,7 +108,13 @@ public class AmazonS3SinkPropertiesTests {
 	@Test
 	public void aclExpressionCanBeCustomized() {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-		EnvironmentTestUtils.addEnvironment(context, "s3.bucket:foo", "S3_ACL_EXPRESSION:headers.acl");
+
+		TestPropertyValues.of("S3_ACL_EXPRESSION:headers.acl")
+				.applyTo(context.getEnvironment(), TestPropertyValues.Type.SYSTEM_ENVIRONMENT);
+
+		TestPropertyValues.of("s3.bucket:foo")
+				.applyTo(context);
+
 		context.register(Conf.class);
 		context.refresh();
 		AmazonS3SinkProperties properties = context.getBean(AmazonS3SinkProperties.class);
@@ -112,7 +125,8 @@ public class AmazonS3SinkPropertiesTests {
 	@Test
 	public void aclAndAclExpressionAreMutuallyExclusive() {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-		EnvironmentTestUtils.addEnvironment(context, "s3.bucket:foo", "s3.acl:private", "s3.acl-expression:'acl'");
+		TestPropertyValues.of("s3.bucket:foo", "s3.acl:private", "s3.acl-expression:'acl'")
+				.applyTo(context);
 		context.register(Conf.class);
 		try {
 			context.refresh();
@@ -120,16 +134,16 @@ public class AmazonS3SinkPropertiesTests {
 		}
 		catch (Exception e) {
 			assertThat(e, instanceOf(BeanCreationException.class));
-			assertThat(e.getMessage(), containsString("Only one of 'acl' or 'aclExpression' must be set"));
+			assertThat(e.getCause(), instanceOf(BindException.class));
+			assertThat(e.getCause().getCause(), instanceOf(BindValidationException.class));
 		}
+		context.close();
 	}
 
-	@Configuration
 	@EnableConfigurationProperties(AmazonS3SinkProperties.class)
 	@Import(SpelExpressionConverterConfiguration.class)
 	static class Conf {
 
 	}
-
 
 }
