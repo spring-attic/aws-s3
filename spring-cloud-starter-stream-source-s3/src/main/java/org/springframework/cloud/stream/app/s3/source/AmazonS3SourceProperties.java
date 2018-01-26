@@ -58,7 +58,7 @@ public class AmazonS3SourceProperties {
 	/**
 	 * The local directory to store files.
 	 */
-	private File localDir = new File(System.getProperty("java.io.tmpdir") + "/s3/source");
+	private File localDir = new File(System.getProperty("java.io.tmpdir"), "s3-source");
 
 	/**
 	 * Create or not the local directory.

@@ -29,17 +29,19 @@ N/A
 
 == Output
 
-N/A 
+N/A
 
 == Options
 
 The **$$s3$$** $$sink$$ has the following options:
 
-$$bucket$$:: $$AWS S3 bucket to store files$$ *($$String$$, no default)*
-$$bucketExpression$$:: $$SpEL Expression to evaluate S3 bucket against request `Message`$$ *($$Expression$$, no default)*
-$$keyExpression$$:: $$SpEL Expression to evaluate S3 Object `key` against request `Message`$$ *($$Expression$$, default: `File.getName()` if any)*
-$$acl$$:: $$Access control list for S3 Object$$ *($$CannedAccessControlList$$, no default)*
-$$aclExpression$$:: $$SpEL Expression to evaluate access control list for S3 Object against request `Message`$$ *($$Expression$$, no default)*
+//tag::configuration-properties[]
+$$s3.acl$$:: $$S3 Object access control list.$$ *($$CannedAccessControlList$$, default: `$$<none>$$`, possible values: `private`,`public-read`,`public-read-write`,`authenticated-read`,`log-delivery-write`,`bucket-owner-read`,`bucket-owner-full-control`,`aws-exec-read`)*
+$$s3.acl-expression$$:: $$Expression to evaluate S3 Object access control list.$$ *($$Expression$$, default: `$$<none>$$`)*
+$$s3.bucket$$:: $$AWS bucket for target file(s) to store.$$ *($$String$$, default: `$$<none>$$`)*
+$$s3.bucket-expression$$:: $$Expression to evaluate AWS bucket name.$$ *($$Expression$$, default: `$$<none>$$`)*
+$$s3.key-expression$$:: $$Expression to evaluate S3 Object key.$$ *($$Expression$$, default: `$$<none>$$`)*
+//end::configuration-properties[]
 
 The target generated application based on the `AmazonS3SinkConfiguration` can be enhanced with the `S3MessageHandler.UploadMetadataProvider` and/or `S3ProgressListener`, which are injected into `S3MessageHandler` bean.
 
