@@ -17,7 +17,8 @@
 	</parent>
 
 	<properties>
-		<spring-integration-aws.version>2.0.0.BUILD-SNAPSHOT</spring-integration-aws.version>
+		<spring-integration-aws.version>2.0.0.M2</spring-integration-aws.version>
+		<spring-cloud-aws.version>2.0.0.M4</spring-cloud-aws.version>
 	</properties>
 
 	<dependencyManagement>
@@ -45,7 +46,7 @@
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-starter-aws</artifactId>
-				<version>2.0.0.BUILD-SNAPSHOT</version>
+				<version>${spring-cloud-aws.version}</version>
 				<exclusions>
 					<exclusion>
 						<groupId>com.amazonaws</groupId>
