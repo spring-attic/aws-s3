@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>aws-s3-app-starters-build</artifactId>
 		<groupId>org.springframework.cloud.stream.app</groupId>
-		<version>2.0.1.BUILD-SNAPSHOT</version>
+		<version>2.1.0.BUILD-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>aws-s3-app-starters-common</artifactId>
