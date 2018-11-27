@@ -197,6 +197,8 @@ public abstract class AmazonS3SourceMockTests {
 						equalTo(new File(this.config.getLocalDir() + File.separator + i + ".test")));
 			}
 
+			this.s3ChannelAdapter.stop();
+
 			assertEquals(2, this.config.getLocalDir().list().length);
 
 			AWSCredentialsProvider awsCredentialsProvider =
@@ -235,6 +237,8 @@ public abstract class AmazonS3SourceMockTests {
 			assertThat(received, hasPayload("Other2"));
 
 			assertNull(messages.poll(10, TimeUnit.MILLISECONDS));
+
+			this.s3ChannelAdapter.stop();
 
 			assertEquals(1, this.config.getLocalDir().list().length);
 		}
