@@ -52,6 +52,10 @@
 							<!--<testsIgnored>true</testsIgnored>-->
 						</s3-sink>
 					</generatedApps>
+					<enableContainerImageMetadata>true</enableContainerImageMetadata>
+					<metadataSourceTypeFilters>
+						<filter>org.springframework.cloud.stream.app.s3.sink.AmazonS3SinkProperties</filter>
+					</metadataSourceTypeFilters>
 				</configuration>
 			</plugin>
 		</plugins>

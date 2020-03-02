@@ -67,6 +67,12 @@
 							<testsIgnored>true</testsIgnored>
 						</s3-source>
 					</generatedApps>
+					<enableContainerImageMetadata>true</enableContainerImageMetadata>
+					<metadataSourceTypeFilters>
+						<filter>org.springframework.cloud.stream.app.s3.source.AmazonS3SourceProperties</filter>
+						<filter>org.springframework.cloud.stream.app.file.FileConsumerProperties</filter>
+						<filter>org.springframework.cloud.stream.app.trigger.TriggerPropertiesMaxMessagesDefaultUnlimited</filter>
+					</metadataSourceTypeFilters>
 				</configuration>
 			</plugin>
 		</plugins>
